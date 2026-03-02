@@ -9,7 +9,6 @@
     <script th:src="@{/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js}"></script>
 </head>
 <body>
-    <!-- Navbar -->
     <div th:insert="~{template1 :: navbar}"></div>
 
     <div class="container mt-5">
@@ -21,14 +20,13 @@
         </div>
 
         <div class="row g-4">
-            <!-- Gestion des Produits -->
             <div class="col-md-6">
                 <div class="card dashboard-card" onclick="window.location.href='/admin/produits'">
                     <div class="card-body text-center p-5">
                         <div class="icon-large text-primary">📚</div>
                         <h3 class="card-title">Gestion des Produits</h3>
                         <p class="card-text text-muted">
-                            Ajouter, modifier ou supprimer des produits de la bibliothèque
+                            Ajouter, modifier ou supprimer des produits de Store shop
                         </p>
                         <a th:href="@{/admin/produits}" class="btn btn-primary btn-lg mt-3">
                             Accéder <i class="bi bi-arrow-right"></i>
@@ -47,6 +45,22 @@
                             Gérer les comptes utilisateurs et leurs rôles
                         </p>
                         <a th:href="@{/admin/users}" class="btn btn-success btn-lg mt-3">
+                            Accéder <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestion des Catégories -->
+            <div class="col-md-6">
+                <div class="card dashboard-card" onclick="window.location.href='/admin/categories'">
+                    <div class="card-body text-center p-5">
+                        <div class="icon-large text-warning">📂</div>
+                        <h3 class="card-title">Gestion des Catégories</h3>
+                        <p class="card-text text-muted">
+                            Ajouter, modifier ou supprimer des catégories de produits
+                        </p>
+                        <a th:href="@{/admin/categories}" class="btn btn-warning btn-lg mt-3">
                             Accéder <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>

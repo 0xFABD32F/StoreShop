@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data @AllArgsConstructor @NoArgsConstructor @Builder
 public class AppUser {
-   
+
     @Id
     private String userId;
     @Column(unique = true)

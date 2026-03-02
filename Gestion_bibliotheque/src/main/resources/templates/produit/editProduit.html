@@ -7,7 +7,6 @@
     <link rel="stylesheet" th:href="@{/css/produit.css}" />
 </head>
 <body>
-    <!-- Inclure la navbar -->
     <div th:insert="~{template1 :: navbar}"></div>
 
     <form th:object="${produit}" th:action="@{/admin/produits/edit}" method="post" enctype="multipart/form-data" 
@@ -26,9 +25,18 @@
                 </div>
                 
                 <div class="mb-3">
-                    <label for="categorie" class="form-label">Catégorie</label>
-                    <input type="text" th:field="*{categorie}" class="form-control" id="categorie" 
-                           placeholder="Catégorie du produit" required>
+                    <label for="categorieId" class="form-label">Catégorie</label>
+                    <select name="categorieId" class="form-select" id="categorieId" required>
+                        <option value="">-- Sélectionnez une catégorie --</option>
+                        <option th:each="cat : ${categories}" 
+                                th:value="${cat.id}" 
+                                th:text="${cat.nom}"
+                                th:selected="${produit.categorie != null and cat.id == produit.categorie.id}">
+                        </option>
+                    </select>
+                    <small class="form-text text-muted">
+                        <a th:href="@{/admin/categories}" target="_blank">Gérer les catégories</a>
+                    </small>
                 </div>
                 
                 <div class="mb-3">

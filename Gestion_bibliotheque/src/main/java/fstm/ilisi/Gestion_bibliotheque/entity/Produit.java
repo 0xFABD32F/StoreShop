@@ -8,11 +8,14 @@ import lombok.Setter;
 
 @Entity @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class Produit {
-    
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nom;
-    private String categorie;
+
+    @ManyToOne
+    private Categorie categorie;
+
     private String imageUrl;
     private String description;
     private double prix;

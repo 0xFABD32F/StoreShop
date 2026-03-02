@@ -1,7 +1,9 @@
 package fstm.ilisi.Gestion_bibliotheque.controller;
 
+import fstm.ilisi.Gestion_bibliotheque.entity.Categorie;
 import fstm.ilisi.Gestion_bibliotheque.entity.Produit;
-import fstm.ilisi.Gestion_bibliotheque.repository.ProduitRepository;
+import fstm.ilisi.Gestion_bibliotheque.service.CategorieService;
+import fstm.ilisi.Gestion_bibliotheque.service.ProduitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,14 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -39,7 +39,10 @@ class ProduitControllerTest {
 
     // Mock des dépendances pour isoler le controller
     @Mock
-    private ProduitRepository produitRepository;
+    private ProduitService produitService;
+    
+    @Mock
+    private CategorieService categorieService;
     
     // Mock du model pour verifier les attributs ajoutes
     @Mock
@@ -52,13 +55,36 @@ class ProduitControllerTest {
     private MockMvc mockMvc;
     private Produit produit1;
     private Produit produit2;
+    private Categorie categorie1;
+    private Categorie categorie2;
 
     // Initialisation avant chaque test
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(produitController).build();
-        produit1 = new Produit(1L, "Smartphone", "Electronique", "https://example.com/smartphone.jpg", "Téléphone haut de gamme", 599.99, 10);
-        produit2 = new Produit(2L, "Ordinateur portable", "Informatique", "https://example.com/laptop.jpg", "PC portable 15 pouces", 899.99, 5);
+        
+        // Créer les catégories pour les tests
+        categorie1 = new Categorie(1L, "Electronique");
+        categorie2 = new Categorie(2L, "Informatique");
+        
+        // Créer les produits avec la nouvelle structure
+        produit1 = new Produit();
+        produit1.setId(1L);
+        produit1.setNom("Smartphone");
+        produit1.setCategorie(categorie1);
+        produit1.setImageUrl("https://example.com/smartphone.jpg");
+        produit1.setDescription("Téléphone haut de gamme");
+        produit1.setPrix(599.99);
+        produit1.setStock(10);
+        
+        produit2 = new Produit();
+        produit2.setId(2L);
+        produit2.setNom("Ordinateur portable");
+        produit2.setCategorie(categorie2);
+        produit2.setImageUrl("https://example.com/laptop.jpg");
+        produit2.setDescription("PC portable 15 pouces");
+        produit2.setPrix(899.99);
+        produit2.setStock(5);
     }
 
     @Test
@@ -69,15 +95,14 @@ class ProduitControllerTest {
         List<Produit> produits = Arrays.asList(produit1, produit2);
         Page<Produit> page = new PageImpl<>(produits);
 
-        // simulation du comportement du repository pour retourner une page de produits
-        when(produitRepository.findByNomContainsIgnoreCaseOrDescriptionContainsIgnoreCaseOrCategorieContainsIgnoreCase(
-                anyString(), anyString(), anyString(), any(PageRequest.class))).thenReturn(page);
+        // simulation du comportement du service pour retourner une page de produits
+        when(produitService.searchProduits(anyString(), anyInt(), anyInt())).thenReturn(page);
 
         // appel de la méthode index du controller
         String view = produitController.index(model, 0, 5, "");
 
         // verification du nom de la vue retournée
-        assertEquals("ListeProduit", view);
+        assertEquals("produit/ListeProduit", view);
 
         // verification que les attributs ont ete ajoutes au model
         verify(model).addAttribute("ListeProduit", produits);
@@ -89,12 +114,12 @@ class ProduitControllerTest {
     void testDeleteProduit() {
 
         // Arrange (pour simuler la suppression d'un produit)
-        doNothing().when(produitRepository).deleteById(1L);
+        doNothing().when(produitService).deleteProduit(1L);
         
         String redirect = produitController.deleteProduit(1L, 0, "");
 
-        assertEquals("redirect:/index?page=0&search=", redirect);
-        verify(produitRepository).deleteById(1L);
+        assertEquals("redirect:/admin/produits?page=0&search=", redirect);
+        verify(produitService).deleteProduit(1L);
     }
 
     @Test
@@ -102,14 +127,16 @@ class ProduitControllerTest {
     void testShowEditForm() {
 
         // Arrange
-        when(produitRepository.findById(1L)).thenReturn(Optional.of(produit1));
+        when(produitService.getProduitById(1L)).thenReturn(produit1);
+        when(categorieService.getAllCategories()).thenReturn(Arrays.asList(categorie1, categorie2));
 
         // Act
         String view = produitController.showEditForm(1L, "", model);
 
         // Assert
-        assertEquals("editProduit", view);
+        assertEquals("produit/editProduit", view);
         verify(model).addAttribute("produit", produit1);
+        verify(model).addAttribute(eq("categories"), anyList());
     }
 
     @Test
@@ -117,58 +144,65 @@ class ProduitControllerTest {
     void testSaveProduit() {
 
         // Arrange
-        when(produitRepository.save(any(Produit.class))).thenReturn(produit1);
+        when(categorieService.getCategorieById(1L)).thenReturn(categorie1);
+        when(produitService.saveProduit(any(Produit.class))).thenReturn(produit1);
 
         // Act
-        String redirect = produitController.saveProduit(produit1, "", null);
+        String redirect = produitController.saveProduit(produit1, 1L, "", null);
 
         // Assert
-        assertEquals("redirect:/index?search=", redirect);
-        verify(produitRepository).save(produit1);
+        assertEquals("redirect:/admin/produits?search=", redirect);
+        verify(categorieService).getCategorieById(1L);
+        verify(produitService).saveProduit(produit1);
     }
 
     @Test
     @DisplayName("Test showAddForm")
     void testShowAddForm() {
+        // Arrange
+        when(categorieService.getAllCategories()).thenReturn(Arrays.asList(categorie1, categorie2));
+        
         // Act
         String view = produitController.showAddForm("", model);
 
         // Assert
-        assertEquals("ajouterProduit", view);
+        assertEquals("produit/ajouterProduit", view);
 
         verify(model).addAttribute(eq("produit"), any(Produit.class));
+        verify(model).addAttribute(eq("categories"), anyList());
     }
 
     @Test
     @DisplayName("Test addProduit")
     void testAddProduit() {
         // Arrange
-        when(produitRepository.save(any(Produit.class))).thenReturn(produit1);
+        when(categorieService.getCategorieById(1L)).thenReturn(categorie1);
+        when(produitService.saveProduit(any(Produit.class))).thenReturn(produit1);
 
         // Act
-        String redirect = produitController.addProduit(produit1, "", null);
+        String redirect = produitController.addProduit(produit1, 1L, "", null);
 
         // Assert
-        assertEquals("redirect:/index?search=", redirect);
-        verify(produitRepository).save(produit1);
+        assertEquals("redirect:/admin/produits?search=", redirect);
+        verify(categorieService).getCategorieById(1L);
+        verify(produitService).saveProduit(produit1);
     }
 
     @Test
     @DisplayName("Test home")
     void testHome() {
         String redirect = produitController.home();
-        assertEquals("redirect:/index", redirect);
+        assertEquals("redirect:/admin/dashboard", redirect);
     }
 
     @Test
     @DisplayName("Test avec MockMvc ")
     void testIndexWithMockMvc() throws Exception {
         Page<Produit> page = new PageImpl<>(Arrays.asList(produit1));
-        when(produitRepository.findByNomContainsIgnoreCaseOrDescriptionContainsIgnoreCaseOrCategorieContainsIgnoreCase(
-                anyString(), anyString(), anyString(), any(PageRequest.class))).thenReturn(page);
+        when(produitService.searchProduits(anyString(), anyInt(), anyInt())).thenReturn(page);
 
-        mockMvc.perform(get("/index"))
+        mockMvc.perform(get("/admin/produits"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("ListeProduit"));
+                .andExpect(view().name("produit/ListeProduit"));
     }
 }

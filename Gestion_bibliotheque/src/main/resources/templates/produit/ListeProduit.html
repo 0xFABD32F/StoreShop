@@ -10,7 +10,6 @@
 </head>
 
 <body>
-    <!-- Inclure la navbar -->
     <div th:insert="~{template1 :: navbar}"></div>
 
     <div class="container mt-4">
@@ -61,7 +60,13 @@
                                     <span th:unless="${produit.imageUrl != null and !produit.imageUrl.isEmpty()}">Pas d'image</span>
                                 </td>
                                 <td><strong th:text="${produit.nom}"></strong></td>
-                                <td><span class="badge bg-info" th:text="${produit.categorie}"></span></td>
+                                <td>
+                                    <span class="badge bg-info" 
+                                          th:if="${produit.categorie != null}" 
+                                          th:text="${produit.categorie.nom}">
+                                    </span>
+                                    <span class="badge bg-secondary" th:unless="${produit.categorie != null}">Sans catégorie</span>
+                                </td>
                                 <td th:text="${produit.description}"></td>
                                 <td><span class="price" th:text="${produit.prix} + ' €'"></span></td>
                                 <td>
