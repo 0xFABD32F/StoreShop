@@ -1,15 +1,13 @@
 package com.storeshop.services.impl;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-
 import com.storeshop.entities.Produit;
 import com.storeshop.repositories.ProduitRepository;
 import com.storeshop.services.ProduitService;
-
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 /** {@link ProduitService} implementation delegating queries and persistence to the repository. */
 @Service

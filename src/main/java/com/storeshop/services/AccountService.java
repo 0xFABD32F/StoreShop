@@ -3,7 +3,8 @@ package com.storeshop.services;
 import com.storeshop.entities.User;
 
 /**
- * Application-level user operations: registration, lookup, and optional bootstrap of a default admin.
+ * Application-level user operations: registration, lookup, and optional bootstrap of a default
+ * admin.
  */
 public interface AccountService {
 

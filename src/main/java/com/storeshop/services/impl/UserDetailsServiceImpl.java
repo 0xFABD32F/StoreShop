@@ -9,9 +9,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * Spring Security adapter: maps domain {@link User} (including encoded password and role) to
- * {@link UserDetails}. Role names are passed without the {@code ROLE_} prefix; Spring adds the
- * prefix when building authorities.
+ * Spring Security adapter: maps domain {@link User} (including encoded password and role) to {@link
+ * UserDetails}. Role names are passed without the {@code ROLE_} prefix; Spring adds the prefix when
+ * building authorities.
  */
 @Service
 @AllArgsConstructor

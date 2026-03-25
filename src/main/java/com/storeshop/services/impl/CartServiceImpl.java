@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CartServiceImpl implements CartService {
 
-  /** Session attribute name; keep stable so other layers can document the same contract if needed. */
+  /**
+   * Session attribute name; keep stable so other layers can document the same contract if needed.
+   */
   private static final String CART_SESSION_KEY = "CART";
 
   private final ProduitService produitService;

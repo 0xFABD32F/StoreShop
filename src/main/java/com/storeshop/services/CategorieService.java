@@ -1,12 +1,9 @@
 package com.storeshop.services;
 
+import com.storeshop.entities.Categorie;
 import java.util.List;
 
-import com.storeshop.entities.Categorie;
-
-/**
- * CRUD and name checks for product categories.
- */
+/** CRUD and name checks for product categories. */
 public interface CategorieService {
 
   List<Categorie> getAllCategories();

@@ -5,14 +5,13 @@ import com.storeshop.entities.User;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Order lifecycle: creation from cart-like item maps, listing, and status updates for staff.
- */
+/** Order lifecycle: creation from cart-like item maps, listing, and status updates for staff. */
 public interface CommandeService {
 
   /**
    * Builds a validated order for the user: checks stock, decrements inventory, snapshots prices,
-   * and persists the order in status {@code VALIDEE}. Runs in a transaction with the implementation.
+   * and persists the order in status {@code VALIDEE}. Runs in a transaction with the
+   * implementation.
    *
    * @param user order owner
    * @param items product id → quantity from the cart

@@ -3,9 +3,7 @@ package com.storeshop.services;
 import com.storeshop.entities.Produit;
 import org.springframework.data.domain.Page;
 
-/**
- * Product catalog: paged search, load/save/delete, and existence checks.
- */
+/** Product catalog: paged search, load/save/delete, and existence checks. */
 public interface ProduitService {
 
   /** Admin-oriented search over products (implementation defines matching rules). */
