@@ -42,7 +42,14 @@ public class ConfigSecurity {
             .contentSecurityPolicy(
               csp ->
                 csp.policyDirectives(
-                  "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"))
+                  "default-src 'self'; " +
+                  "img-src 'self' data: images.unsplash.com picsum.photos; " +
+                  "style-src 'self' 'unsafe-inline' fonts.googleapis.com; " +
+                  "font-src 'self' fonts.gstatic.com; " +
+                  "script-src 'self' 'unsafe-inline'; " +
+                  "object-src 'none'; " +
+                  "base-uri 'self'; " +
+                  "frame-ancestors 'none'"))
             .referrerPolicy(
               referrer ->
                 referrer.policy(
